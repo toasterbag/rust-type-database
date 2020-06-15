@@ -14,8 +14,8 @@ fn main() {
     let mut db = Database::new();
     let a: u64 = 1;
     let b: i64 = 1;
-    db.store(KEY, a).expect("Failed to serialize data");
-    db.store(KEY, b).expect("Failed to serialize data");
+    db.store(KEY, a);
+    db.store(KEY, b);
     // Will fail if key is missing
     assert_eq!(&a, db.fetch_ref(KEY).unwrap());
     assert_eq!(&b, db.fetch_ref(KEY).unwrap());
