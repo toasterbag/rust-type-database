@@ -1,4 +1,3 @@
-use anyhow::{anyhow, Result};
 use std::any::{Any, TypeId};
 use std::collections::hash_map::RandomState;
 use std::collections::HashMap;
@@ -45,7 +44,7 @@ impl Database {
         None
     }
 
-    pub fn store<K, V>(&mut self, key: K, v: V) -> Result<()>
+    pub fn store<K, V>(&mut self, key: K, v: V)
     where
         K: std::hash::Hash,
         V: Any,
@@ -60,8 +59,14 @@ impl Database {
             .entry(TypeId::of::<V>())
             .or_insert(HashMap::new());
         map.insert(hash, index);
+    }
 
-        Ok(())
+    pub fn contains<K, V>(&self, key: K) -> bool
+    where
+        K: std::hash::Hash,
+        V: Any,
+    {
+        self.index::<_, V>(key).is_some()
     }
 
     pub fn fetch_ref<K, V>(&self, key: K) -> Option<&V>
@@ -94,8 +99,9 @@ impl Database {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
+    use anyhow::Result;
 
     #[test]
     fn same_key_different_values() -> Result<()> {
@@ -103,8 +109,8 @@ mod test {
         let mut db = Database::new();
         let a: u64 = 1;
         let b: i64 = 2;
-        db.store(KEY, a.clone())?;
-        db.store(KEY, b.clone())?;
+        db.store(KEY, a);
+        db.store(KEY, b);
         assert_eq!(&a, db.fetch_ref(KEY).unwrap());
         assert_eq!(&b, db.fetch_ref(KEY).unwrap());
         Ok(())
@@ -116,7 +122,7 @@ mod test {
         const OTHER_KEY: u64 = 2;
         let mut db = Database::new();
         let a: u64 = 1;
-        db.store(KEY, a)?;
+        db.store(KEY, a);
 
         let res = db.fetch_ref::<_, u64>(OTHER_KEY);
         assert!(res.is_none());
@@ -129,7 +135,7 @@ mod test {
         const OTHER_KEY: u8 = 1;
         let mut db = Database::new();
         let a: u64 = 1;
-        db.store(KEY, a)?;
+        db.store(KEY, a);
 
         let res = db.fetch_ref::<_, u64>(OTHER_KEY);
         assert!(res.is_none());
@@ -141,7 +147,7 @@ mod test {
         const KEY: u64 = 1;
         let mut db = Database::new();
         let a: u64 = 1;
-        db.store(KEY, a.clone())?;
+        db.store(KEY, a);
         assert_eq!(&a, db.fetch_ref(KEY).unwrap());
         Ok(())
     }
@@ -152,7 +158,7 @@ mod test {
         let mut db = Database::new();
         let a: u64 = 1;
         let b: u64 = 2;
-        db.store(KEY, a.clone())?;
+        db.store(KEY, a);
 
         {
             if let Some(i) = db.fetch_mut::<_, u64>(KEY) {

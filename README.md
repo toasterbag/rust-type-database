@@ -1,8 +1,8 @@
 # A typed database for Rust
 A database that can store values of different types with support for indexes of any types that are hashable. Support for persistance is planned.
 
-There are currently a few restraints on which types can be stored due to the plans on making the database persistable.
-Keys need to be `Debug + Hash` while values need to be `Any + Serialize + DeserializeOwned`. In the future keys will also have to be `Serialize + DeserializeOwned` but there will also be a non-persistent version which will require neither keys nor values to be `Serialize + DeserializeOwned`.
+The database comes in two flavours, one stores serialized values using serde and with support for persistence. 
+The other database stores values using a boxed values in a vector and is around 20% faster.
 
 ## Examples
 Storing both signed and unsigned integers

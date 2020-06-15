@@ -1,7 +1,7 @@
 use crate::Database;
 
 use anyhow::{anyhow, Result};
-use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use serde::{de::DeserializeOwned, Serialize};
 use std::any::Any;
 
 pub trait Storable: Any {}
@@ -26,7 +26,7 @@ impl DatabasePersistent {
     {
         let data = bincode::serialize(&v)?;
         self.items.push(data);
-        self.inner.store(key, v)?;
+        self.inner.store(key, v);
 
         Ok(())
     }
@@ -47,7 +47,7 @@ impl DatabasePersistent {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
