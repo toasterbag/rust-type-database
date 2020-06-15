@@ -4,6 +4,8 @@ A database that can store values of different types with support for indexes of 
 The database comes in two flavours, one stores serialized values using serde and with support for persistence. 
 The other database stores values using a boxed values in a vector and is around 20% faster.
 
+The only requirements for the memory database are that keys are `Hash` and values are `Any`.
+
 ## Examples
 Storing both signed and unsigned integers
 ```rust
